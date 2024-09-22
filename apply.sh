@@ -70,7 +70,6 @@ cd ../../../
 cd vendor/lineage
 echo "Applying patches to vendor/lineage"
 git am --signoff < ~/7420_patches-lineage-20.0/vendor_lineage/0000-Disable-adb-secure.patch
-git am --signoff < ~/7420_patches-lineage-20.0/vendor_lineage/0001-Add-back-TARGET_NEEDS_NETD_DIRECT_CONNECT_RULE.patch
 git am --signoff < ~/7420_patches-lineage-20.0/vendor_lineage/0002-Add-back-TARGET_HAS_MEMFD_BACKPORT.patch
 cd ../../
 
