@@ -1,0 +1,66 @@
+From f3851cb2b3ab9b8b86753a5657083141b540b91f Mon Sep 17 00:00:00 2001
+From: Ricky Cheung <rcheung844@gmail.com>
+Date: Fri, 29 Mar 2024 18:55:05 +0800
+Subject: [PATCH 1/1] Correct logic for obtaining the path to full recovery
+ image
+
+Currently, an extra '/vendor' is appended in target_files_dir of
+make_recovery_patch.py, which will yield an erroneous path when
+attempting to build full recovery image on vendorimage-leas devices:
+
+SYSTEM/vendor/vendor/etc/recovery.img
+
+This patch addresses the issue by removing the extra '/vendor' of
+target_files_dir, and add checks for whether the target builds
+vendor image in MakeRecoveryPatch() as well. This ensures no
+recovery image will be generated with prebuilt vendor.
+
+Signed-off-by: Ricky Cheung <rcheung844@gmail.com>
+Change-Id: I2dc6e43537deb606dd01fb090add2595502055c1
+---
+ tools/releasetools/common.py              | 8 ++++++--
+ tools/releasetools/make_recovery_patch.py | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/tools/releasetools/common.py b/tools/releasetools/common.py
+index a65c5d80d..3194dc3cf 100644
+--- a/tools/releasetools/common.py
++++ b/tools/releasetools/common.py
+@@ -3052,15 +3052,19 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
+ 
+   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+   board_uses_vendorimage = info_dict.get("board_uses_vendorimage") == "true"
++  board_builds_vendorimage =  info_dict.get("board_builds_vendorimage") == "true"
+ 
+-  if board_uses_vendorimage:
++  if board_builds_vendorimage:
+     # In this case, the output sink is rooted at VENDOR
+     recovery_img_path = "etc/recovery.img"
+     recovery_resource_dat_path = "VENDOR/etc/recovery-resource.dat"
+-  else:
++  elif not board_uses_vendorimage:
+     # In this case the output sink is rooted at SYSTEM
+     recovery_img_path = "vendor/etc/recovery.img"
+     recovery_resource_dat_path = "SYSTEM/vendor/etc/recovery-resource.dat"
++  else:
++    logger.warning('Recovery patch generation is disable when prebuilt vendor image is used.')
++    return None
+ 
+   if full_recovery_image:
+     output_sink(recovery_img_path, recovery_img.data)
+diff --git a/tools/releasetools/make_recovery_patch.py b/tools/releasetools/make_recovery_patch.py
+index b52289b8a..0501b2039 100644
+--- a/tools/releasetools/make_recovery_patch.py
++++ b/tools/releasetools/make_recovery_patch.py
+@@ -56,7 +56,7 @@ def main(argv):
+   if board_builds_vendorimage:
+     target_files_dir = "VENDOR"
+   elif not board_uses_vendorimage:
+-    target_files_dir = "SYSTEM/vendor"
++    target_files_dir = "SYSTEM"
+ 
+   def output_sink(fn, data):
+     if target_files_dir is None:
+-- 
+2.47.2
+

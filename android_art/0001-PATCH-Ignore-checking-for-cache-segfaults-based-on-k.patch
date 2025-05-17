@@ -1,20 +1,20 @@
-From 10d76a324ebd32d6b7c54e3580fd827a83f31c6b Mon Sep 17 00:00:00 2001
-From: Fakeman <55951275+fakemanoan@users.noreply.github.com>
-Date: Wed, 3 Jan 2024 15:29:04 +0000
-Subject: [PATCH] Cache operations dont segfault on our kernel
+From 1eb79cc0e4a782c7052ab6357e61bf86cbe7b317 Mon Sep 17 00:00:00 2001
+From: Ivy <78825510+Lost-Entrepreneur439@users.noreply.github.com>
+Date: Sat, 17 May 2025 20:41:54 -0230
+Subject: [PATCH 1/1] [PATCH] Ignore checking for cache segfaults based on
+ kernel ver Our kernel already has the fix direct from Samsung, so this is an
+ unnecessary check
 
-This fix was backported by samsung, so we can skip this check
-
-Change-Id: I33bd99958593658e019740bc6adcc597b46662a4
+Change-Id: Ifeee891c6272b8b00270cb0594cc8eb135d650d5
 ---
- libartbase/base/utils.cc | 22 ++--------------------
- 1 file changed, 2 insertions(+), 20 deletions(-)
+ libartbase/base/utils.cc | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
 
 diff --git a/libartbase/base/utils.cc b/libartbase/base/utils.cc
-index ba62f30bdc..3ae5a1ec21 100644
+index 19311b3..928d484 100644
 --- a/libartbase/base/utils.cc
 +++ b/libartbase/base/utils.cc
-@@ -159,26 +159,8 @@ bool FlushCpuCaches(void* begin, void* end) {
+@@ -157,25 +157,7 @@ bool FlushCpuCaches(void* begin, void* end) {
  #endif
  
  bool CacheOperationsMaySegFault() {
@@ -37,11 +37,10 @@ index ba62f30bdc..3ae5a1ec21 100644
 -    return true;
 -  }
 -#endif
--  return false;
-+// Our kernel, despite being 3.10, incorporates the cache fix stated above.
-+    return false;
++// Force allow as our kernel incorporates cache segfault fixes from Samsung. Improves performance
+   return false;
  }
  
- uint32_t GetTid() {
 -- 
-2.25.1
+2.47.2
+

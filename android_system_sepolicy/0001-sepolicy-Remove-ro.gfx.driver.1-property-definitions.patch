@@ -1,0 +1,43 @@
+From 4aaada7215bdde0f4f07b3fc5985dd51c0c0e5d1 Mon Sep 17 00:00:00 2001
+From: Ivy <78825510+Lost-Entrepreneur439@users.noreply.github.com>
+Date: Sat, 17 May 2025 20:35:51 -0230
+Subject: [PATCH 1/1] sepolicy: Remove ro.gfx.driver.1 property definitions The
+ property `ro.gfx.driver.1` is already defined in the universal7420-common
+ device tree, leading to a duplicate definition conflict with
+ prebuilts/api/30.0/public/property_contexts and
+ system/sepolicy/public/property_contexts.
+
+Remove the redundant entries to fix build errors on crDroid 7
+for the Galaxy S6.
+---
+ prebuilts/api/30.0/public/property_contexts | 1 -
+ public/property_contexts                    | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/prebuilts/api/30.0/public/property_contexts b/prebuilts/api/30.0/public/property_contexts
+index 46b2d1e..19668a4 100644
+--- a/prebuilts/api/30.0/public/property_contexts
++++ b/prebuilts/api/30.0/public/property_contexts
+@@ -146,7 +146,6 @@ ro.crypto.volume.options u:object_r:exported2_vold_prop:s0 exact string
+ ro.dalvik.vm.native.bridge u:object_r:exported_dalvik_prop:s0 exact string
+ ro.enable_boot_charger_mode u:object_r:exported3_default_prop:s0 exact bool
+ ro.gfx.driver.0 u:object_r:exported3_default_prop:s0 exact string
+-ro.gfx.driver.1 u:object_r:exported3_default_prop:s0 exact string
+ ro.gfx.angle.supported u:object_r:exported3_default_prop:s0 exact bool
+ ro.hdmi.device_type u:object_r:exported3_default_prop:s0 exact string
+ ro.hdmi.wake_on_hotplug u:object_r:exported3_default_prop:s0 exact bool
+diff --git a/public/property_contexts b/public/property_contexts
+index 46b2d1e..19668a4 100644
+--- a/public/property_contexts
++++ b/public/property_contexts
+@@ -146,7 +146,6 @@ ro.crypto.volume.options u:object_r:exported2_vold_prop:s0 exact string
+ ro.dalvik.vm.native.bridge u:object_r:exported_dalvik_prop:s0 exact string
+ ro.enable_boot_charger_mode u:object_r:exported3_default_prop:s0 exact bool
+ ro.gfx.driver.0 u:object_r:exported3_default_prop:s0 exact string
+-ro.gfx.driver.1 u:object_r:exported3_default_prop:s0 exact string
+ ro.gfx.angle.supported u:object_r:exported3_default_prop:s0 exact bool
+ ro.hdmi.device_type u:object_r:exported3_default_prop:s0 exact string
+ ro.hdmi.wake_on_hotplug u:object_r:exported3_default_prop:s0 exact bool
+-- 
+2.47.2
+

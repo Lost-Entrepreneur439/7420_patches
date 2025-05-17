@@ -1,0 +1,33 @@
+From 2a75288054cea8ba21b2014626975ea6dcfc6931 Mon Sep 17 00:00:00 2001
+From: Ivy <78825510+Lost-Entrepreneur439@users.noreply.github.com>
+Date: Sat, 17 May 2025 20:32:36 -0230
+Subject: [PATCH 1/1] bionic: Remove redundant H.264 coding type enum from
+ v4l2-controls.h The universal7420 kernel source already defines
+ V4L2_MPEG_VIDEO_H264_HIERARCHICAL_CODING_{B,P}, which causes a redefinition
+ conflict when building bionic.
+
+Remove the duplicate enum definition from
+libc/kernel/uapi/linux/videodev2.h (v4l2-controls.h) to
+resolve the build error for the Galaxy S6 on crDroid 7.
+---
+ libc/kernel/uapi/linux/v4l2-controls.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/libc/kernel/uapi/linux/v4l2-controls.h b/libc/kernel/uapi/linux/v4l2-controls.h
+index 85f3a8b..52126ef 100644
+--- a/libc/kernel/uapi/linux/v4l2-controls.h
++++ b/libc/kernel/uapi/linux/v4l2-controls.h
+@@ -538,10 +538,6 @@ enum v4l2_mpeg_video_vp9_profile {
+ #define V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP (V4L2_CID_MPEG_BASE + 604)
+ #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_QP (V4L2_CID_MPEG_BASE + 605)
+ #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_CODING_TYPE (V4L2_CID_MPEG_BASE + 606)
+-enum v4l2_mpeg_video_hevc_hier_coding_type {
+-  V4L2_MPEG_VIDEO_HEVC_HIERARCHICAL_CODING_B = 0,
+-  V4L2_MPEG_VIDEO_HEVC_HIERARCHICAL_CODING_P = 1,
+-};
+ #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_CODING_LAYER (V4L2_CID_MPEG_BASE + 607)
+ #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_CODING_L0_QP (V4L2_CID_MPEG_BASE + 608)
+ #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_CODING_L1_QP (V4L2_CID_MPEG_BASE + 609)
+-- 
+2.47.2
+
