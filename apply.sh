@@ -3,7 +3,7 @@
 cd packages/modules/NetworkStack
 echo "Applying patches to NetworkStack"
 git am --signoff < ~/7420_patches-lineage-20.0/packages_modules_NetworkStack/0001-Revert-Enable-parsing-netlink-events-from-kernel-sin.patch
-cd ../
+cd ../../../
 cd packages/modules/adb
 echo "Applying patches to adb"
 git am --signoff < ~/7420_patches-lineage-20.0/packages_modules_adb/0001-adb-Bring-back-support-for-legacy-FunctionFS.patch
