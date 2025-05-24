@@ -1,7 +1,7 @@
-From f1c9e8bd907f600470ee709b36861cf4d8a0a739 Mon Sep 17 00:00:00 2001
+From 62f1154c8bfa3101b5411dc3b5edcb2fd964ed5c Mon Sep 17 00:00:00 2001
 From: Fakeman <55951275+fakemanoan@users.noreply.github.com>
 Date: Sun, 22 Sep 2024 17:00:43 +0100
-Subject: [PATCH] [PATCH 2/2] Add back TARGET_HAS_MEMFD_BACKPORT
+Subject: [PATCH 1/1] Add back TARGET_HAS_MEMFD_BACKPORT
 
 We require this patch as in android it checks for kernel versions 3.18 or newer for memfd support. We are on 3.10 for the foreseeable future.
 
@@ -10,16 +10,17 @@ Add flag to skip kernel version check (we have it in the kernel and it didnt cau
 Taken from lineageos-UL
 
 Change-Id: I749e8a1b4e145adc9ff49feec109bf3dfb16d783
+Signed-off-by: Ivy <78825510+Lost-Entrepreneur439@users.noreply.github.com>
 ---
  build/soong/Android.bp     | 17 +++++++++++++++++
  config/BoardConfigSoong.mk |  2 ++
  2 files changed, 19 insertions(+)
 
 diff --git a/build/soong/Android.bp b/build/soong/Android.bp
-index 2029d7ec..e9de1a2d 100644
+index 8e66e74..c4c6f51 100644
 --- a/build/soong/Android.bp
 +++ b/build/soong/Android.bp
-@@ -221,6 +221,23 @@ trust_usb_control {
+@@ -263,6 +263,23 @@ trust_usb_control {
      },
  }
  
@@ -44,7 +45,7 @@ index 2029d7ec..e9de1a2d 100644
      name: "bootloader_message_offset",
      module_type: "cc_defaults",
 diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
-index 651d3372..2e19fcfb 100644
+index bff05c6..2eebedf 100644
 --- a/config/BoardConfigSoong.mk
 +++ b/config/BoardConfigSoong.mk
 @@ -31,6 +31,7 @@ SOONG_CONFIG_lineageGlobalVars += \
@@ -52,10 +53,10 @@ index 651d3372..2e19fcfb 100644
      additional_gralloc_10_usage_bits \
      bootloader_message_offset \
 +    has_memfd_backport \
+     camera_needs_client_info_lib \
+     camera_needs_client_info_lib_oplus \
      camera_override_format_from_reserved \
-     gralloc_handle_has_custom_content_md_reserved_size \
-     gralloc_handle_has_reserved_size \
-@@ -98,6 +99,7 @@ TARGET_TRUST_USB_CONTROL_DISABLE ?= 0
+@@ -110,6 +111,7 @@ TARGET_TRUST_USB_CONTROL_DISABLE ?= 0
  SOONG_CONFIG_lineageGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
  SOONG_CONFIG_lineageGlobalVars_additional_gralloc_10_usage_bits := $(TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS)
  SOONG_CONFIG_lineageGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
@@ -64,5 +65,5 @@ index 651d3372..2e19fcfb 100644
  SOONG_CONFIG_lineageGlobalVars_target_health_charging_control_charging_enabled := $(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED)
  SOONG_CONFIG_lineageGlobalVars_target_health_charging_control_charging_disabled := $(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED)
 -- 
-2.25.1
+2.47.2
 
