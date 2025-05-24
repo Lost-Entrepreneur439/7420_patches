@@ -1,20 +1,21 @@
-From 10d76a324ebd32d6b7c54e3580fd827a83f31c6b Mon Sep 17 00:00:00 2001
+From 83b982cdeb708f9d75021296cbf2cc74f498d572 Mon Sep 17 00:00:00 2001
 From: Fakeman <55951275+fakemanoan@users.noreply.github.com>
 Date: Wed, 3 Jan 2024 15:29:04 +0000
-Subject: [PATCH] Cache operations dont segfault on our kernel
+Subject: [PATCH 1/1] Cache operations dont segfault on our kernel
 
 This fix was backported by samsung, so we can skip this check
 
 Change-Id: I33bd99958593658e019740bc6adcc597b46662a4
+Signed-off-by: Ivy <78825510+Lost-Entrepreneur439@users.noreply.github.com>
 ---
- libartbase/base/utils.cc | 22 ++--------------------
- 1 file changed, 2 insertions(+), 20 deletions(-)
+ libartbase/base/utils.cc | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
 diff --git a/libartbase/base/utils.cc b/libartbase/base/utils.cc
-index ba62f30bdc..3ae5a1ec21 100644
+index a7015c5..a09d53e 100644
 --- a/libartbase/base/utils.cc
 +++ b/libartbase/base/utils.cc
-@@ -159,26 +159,8 @@ bool FlushCpuCaches(void* begin, void* end) {
+@@ -169,18 +169,8 @@ bool IsKernelVersionAtLeast(int reqd_major, int reqd_minor) {
  #endif
  
  bool CacheOperationsMaySegFault() {
@@ -26,23 +27,15 @@ index ba62f30bdc..3ae5a1ec21 100644
 -  //
 -  // This behaviour means we should avoid the dual view JIT on the device. This is just
 -  // an issue when running tests on devices that have an old kernel.
--  static constexpr int kRequiredMajor = 3;
--  static constexpr int kRequiredMinor = 12;
--  struct utsname uts;
--  int major, minor;
--  if (uname(&uts) != 0 ||
--      strcmp(uts.sysname, "Linux") != 0 ||
--      sscanf(uts.release, "%d.%d", &major, &minor) != 2 ||
--      (major < kRequiredMajor || (major == kRequiredMajor && minor < kRequiredMinor))) {
--    return true;
--  }
--#endif
+-  return !IsKernelVersionAtLeast(3, 12);
+-#else
 -  return false;
+-#endif
 +// Our kernel, despite being 3.10, incorporates the cache fix stated above.
 +    return false;
  }
  
  uint32_t GetTid() {
 -- 
-2.25.1
+2.47.2
 
