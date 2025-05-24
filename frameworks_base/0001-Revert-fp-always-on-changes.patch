@@ -15,15 +15,15 @@ diff --git a/packages/SystemUI/src/com/android/keyguard/KeyguardUpdateMonitor.ja
 index e154695e56e31..e960201a5daa7 100644
 --- a/packages/SystemUI/src/com/android/keyguard/KeyguardUpdateMonitor.java
 +++ b/packages/SystemUI/src/com/android/keyguard/KeyguardUpdateMonitor.java
-@@ -335,6 +335,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+@@ -342,6 +342,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
              mCallbacks = Lists.newArrayList();
      private ContentObserver mDeviceProvisionedObserver;
      private final ContentObserver mTimeFormatChangeObserver;
 +    private ContentObserver mSettingsChangeObserver;
+     private ContentObserver mFaceUnlockPrefObserver;
  
      private boolean mSwitchingUser;
- 
-@@ -376,6 +377,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+@@ -384,6 +385,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
      private int mPostureState = DEVICE_POSTURE_UNKNOWN;
      private FingerprintInteractiveToAuthProvider mFingerprintInteractiveToAuthProvider;
  
@@ -32,19 +32,19 @@ index e154695e56e31..e960201a5daa7 100644
      /**
       * Short delay before restarting fingerprint authentication after a successful try. This should
       * be slightly longer than the time between onFingerprintAuthenticated and
-@@ -2183,6 +2186,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+@@ -2262,6 +2265,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                  R.integer.config_face_auth_supported_posture);
          mFaceWakeUpTriggersConfig = faceWakeUpTriggersConfig;
  
 +        updateFingerprintSettings();
 +
-         mHandler = new Handler(mainLooper) {
-             @Override
-             public void handleMessage(Message msg) {
-@@ -2408,6 +2413,28 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
-                 false, mTimeFormatChangeObserver, UserHandle.USER_ALL);
- 
-         mFingerprintInteractiveToAuthProvider = interactiveToAuthProvider.orElse(null);
+         mPocketManager = (PocketManager) context.getSystemService(Context.POCKET_SERVICE);
+         if (mPocketManager != null) {
+             mPocketManager.addCallback(mPocketCallback);
+@@ -2519,6 +2524,28 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+                 Settings.Secure.FACE_UNLOCK_METHOD, FACE_UNLOCK_BEHAVIOR_DEFAULT,
+                 UserHandle.USER_CURRENT);
+         }
 +
 +        mSettingsChangeObserver = new ContentObserver(mHandler) {
 +            @Override
@@ -70,7 +70,7 @@ index e154695e56e31..e960201a5daa7 100644
      }
  
      private void initializeSimState() {
-@@ -2805,7 +2832,18 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+@@ -2920,7 +2947,18 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
          final int user = getCurrentUser();
          final boolean userDoesNotHaveTrust = !getUserHasTrust(user);
          final boolean shouldListenForFingerprintAssistant = shouldListenForFingerprintAssistant();
@@ -90,7 +90,7 @@ index e154695e56e31..e960201a5daa7 100644
                  isKeyguardVisible()
                          || !mDeviceInteractive
                          || (mPrimaryBouncerIsOrWillBeShowing && !mKeyguardGoingAway)
-@@ -2814,6 +2852,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+@@ -2929,6 +2967,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                          || (mKeyguardOccluded && mIsDreaming)
                          || (mKeyguardOccluded && userDoesNotHaveTrust
                              && (mOccludingAppRequestingFp || isUdfps || mAlternateBouncerShowing));
@@ -98,8 +98,8 @@ index e154695e56e31..e960201a5daa7 100644
  
          // Only listen if this KeyguardUpdateMonitor belongs to the primary user. There is an
          // instance of KeyguardUpdateMonitor for each user but KeyguardUpdateMonitor is user-aware.
-@@ -4022,6 +4061,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
-             mContext.getContentResolver().unregisterContentObserver(mTimeFormatChangeObserver);
+@@ -4187,6 +4226,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
+                     mFaceUnlockPrefObserver);
          }
  
 +        if (mSettingsChangeObserver != null) {
