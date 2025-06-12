@@ -1,7 +1,7 @@
-# Exynos 7420 patches for LineageOS 20.0
+# Exynos 7420 patches for crDroid 9
 You must apply all of the patches in this repository in order for proper building and booting. 
 
-Only validated to work on LineageOS 20.0 (as of Jan 2024)
+Only validated to work on crDroid 9 (as of Jun 2025)
 
 Extract files to ~/7420_patches-lineage-20.0. Copy apply.sh to the root of your lineage 20 sources.
 
