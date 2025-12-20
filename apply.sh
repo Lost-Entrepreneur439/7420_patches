@@ -11,7 +11,6 @@ cd ../../
 cd frameworks/native
 echo "Applying patches to frameworks/native"
 git am --signoff < ~/7420_patches-lineage-20.0/frameworks_native/0001-Disable-gpu-service.patch
-git am --signoff < ~/7420_patches-lineage-20.0/frameworks_native/0001-Revert-Remove-obsolete-debug-option.patch
 git am --signoff < ~/7420_patches-lineage-20.0/frameworks_native/0002-Add-back-pre-S-createEventQueue-function.patch
 cd ../../
 cd frameworks/base
